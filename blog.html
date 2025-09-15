@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h2>Blog</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="cv.html" class="nav-link">CV</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="blog.html" class="nav-link active">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="index.html#contacts" class="nav-link">Contatti</a>
+                    </li>
+                </ul>
+                <div class="nav-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="blog-main">
+        <div class="container">
+            <section class="blog-header">
+                <h1>Il Mio Blog</h1>
+            </section>
+
+            <section class="blog-content">
+                <div class="articles-grid">
+                    <article class="article-card" data-article="1">
+                        <div class="article-header">
+                            <span class="article-date">15 Settembre 2025</span>
+                            <span class="article-category">Analisi Malware</span>
+                        </div>
+                        <h2>Prossimamente...</h2>
+                        <div class="article-preview">
+                            <p>
+                               Prossimamente....
+                            </p>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn-expand" onclick="toggleArticlePreview(1)">
+                                Espandi anteprima
+                            </button>
+                            <a href="article1.html" class="btn btn-primary">Leggi tutto</a>
+                        </div>
+                        <div class="article-full-preview" id="preview-1" style="display: none;">
+                            <p>
+                               Prossimamente....
+                            </p>
+                            <p>
+                                Prossimamente....
+                            </p>
+                        </div>
+                    </article>
+
+                   
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="contacts">
+        <div class="container">
+            <div class="footer-content">
+                <h3>Contatti</h3>
+                <div class="contact-info">
+                    <p>LinkedIn: <a href="https://it.linkedin.com/in/luigi-schillaci-192404201" target="_blank" rel="noopener noreferrer">Il Mio Profilo</a></p>
+                    <p>GitHub: <a href="https://github.com/LuigiSchillaci19" target="_blank" rel="noopener noreferrer">Il Mio Repository</a></p>
+                </div>
+                <p class="footer-note">© 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum Vitae</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h2>CV</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="cv.html" class="nav-link active">CV</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="blog.html" class="nav-link">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="index.html#contacts" class="nav-link">Contatti</a>
+                    </li>
+                </ul>
+                <div class="nav-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="cv-main">
+        <div class="container">
+            <section class="cv-header">
+                <div class="profile-section">
+                    <div class="profile-info">
+                        <h1>Luigi Schillaci</h1>
+                        <h2 class="title">SOC Analyst</h2>
+                    </div>
+                </div>
+            </section>
+
+            <div class="cv-content">
+                <section id="experience" class="cv-section">
+                    <h2>Esperienza Lavorativa</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">2024 - Presente</div>
+                            <div class="timeline-content">
+                                <h3>SOC Analyst</h3>
+                                <h4>Engineering S.P.A</h4>
+                                <p>
+                                    Attività di monitoraggio e risposta agli incidenti di sicurezza informatica in un ambiente enterprise.
+                                    Utilizzo di soluzioni SIEM (Splunk, QRadar, Elastic) per la raccolta, analisi e correlazione dei log,
+                                    con l'obiettivo di rilevare tempestivamente minacce e comportamenti anomali.
+                                </p>
+                                <p>
+                                    Supporto continuo H24 con l'uso di soluzioni EDR e XDR per il monitoraggio in tempo reale degli endpoint
+                                    e dell'infrastruttura di rete, garantendo la protezione proattiva degli asset aziendali.
+                                </p>
+                                <p>
+                                    Gestione completa della risposta agli incidenti: identificazione, contenimento (isolamento e quarantena
+                                    delle macchine compromesse), mitigazione e ripristino delle operazioni.
+                                </p>
+                                <p>
+                                    Analisi avanzata di e-mail sospette (phishing/spam), valutando contenuto, header, allegati e
+                                    payload per rilevare minacce come macro dannose, script malevoli e malware nascosti in documenti.
+                                </p>
+
+                                <ul class="achievements">
+                                    <li>Individuazione e contenimento rapido di minacce interne tramite correlazione log SIEM.</li>
+                                    <li>Implementazione di nuove regole di detection personalizzate per scenari di attacco reali.</li>
+                                    <li>Partecipazione a team di incident response in ambienti complessi e ad alta criticità.</li>
+                                </ul>
+                            </div>
+                        </div>
+                </section>
+
+                <section class="cv-section">
+                    <h2>Istruzione</h2>
+                    <div class="education-grid">
+                        <div class="education-item">
+                            <div class="education-year">2019 - 2024</div>
+                            <div class="education-details">
+                                <h3>Laurea Triennale in Computer Engineering</h3>
+                                <h4>Università degli Studi di Catania</h4>
+                                <p>Tesi: "Progettazione e realizzazione di una mailbox intelligente"</p> 
+                            </div>
+                        </div>
+
+                        <div class="education-item">
+                            <div class="education-year">2014 - 2019</div>
+                            <div class="education-details">
+                                <h3>Diploma in Informatica</h3>
+                                <h4>I.I.S. Ettore Majorana</h4>                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="cv-grid">
+                    <section id="skills" class="cv-section">
+                        <h2>Competenze Tecniche</h2>
+
+                        <div class="skills-category">
+                            <h3>Linguaggi di Programmazione</h3>
+                            <div class="skills-list">
+                                <span class="skill-tag">C</span>
+                                <span class="skill-tag">Python</span>
+                                <span class="skill-tag">Java</span>
+                                <span class="skill-tag">JavaScript</span>
+                                <span class="skill-tag">PHP</span>
+                                <span class="skill-tag">HTML/CSS</span>
+                            </div>
+                        </div>
+
+                        <div class="skills-category">
+                            <h3>Database & Tools</h3>
+                            <div class="skills-list">
+                                <span class="skill-tag">MySQL</span>
+                            </div>
+                        </div>
+
+                        <div class="skills-category">
+                            <h3>SIEM</h3>
+                            <div class="skills-list">
+                                <span class="skill-tag">QRADAR</span>
+                                <span class="skill-tag">ELASTIC</span>
+                                <span class="skill-tag">SENTINEL</span>
+                                <span class="skill-tag">SPLUNK</span>
+                            </div>
+                        </div>
+                        <div class="skills-category">
+                            <h3>Linguaggi di Query</h3>
+                            <div class="skills-list">
+                                <span class="skill-tag">KQL (Kusto Query Language)</span>
+                                <span class="skill-tag">AQL (Azure Query Language)</span>
+                                <span class="skill-tag">SQL</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="cv-section">
+                        <h2>Lingue</h2>
+                        <div class="languages">
+                            <div class="language-item">
+                                <h3>Italiano</h3>
+                                <div class="language-level">
+                                    <span class="level-label">Madrelingua</span>
+                                    <div class="level-bar">
+                                        <div class="level-fill" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="language-item">
+                                <h3>Inglese</h3>
+                                <div class="language-level">
+                                    <span class="level-label">Intermedio (B2)</span>
+                                    <div class="level-bar">
+                                        <div class="level-fill" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <section class="cv-section">
+                    <h2>Certificazioni</h2>
+                    <div class="certifications">
+
+                        <div class="cert-item">
+                            <h3>Practical Malware Analysis &amp; Triage</h3>
+                            <p class="cert-issuer">TCM Security</p>
+                        </div>
+
+                        <div class="cert-item">
+                            <h3>eWPT - Web Application Penetration Tester</h3>
+                            <p class="cert-issuer">INE Security (FKA eLearnSecurity)</p>
+                        </div>
+
+                        <div class="cert-item">
+                            <h3>CTF 2024</h3>
+                            <p class="cert-issuer">CYBER 4.0 - Cybersecurity Competence Center</p>
+                        </div>
+
+                        <div class="cert-item">
+                            <h3>eJPT - Junior Penetration Tester</h3>
+                            <p class="cert-issuer">INE Security (FKA eLearnSecurity)</p>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer id="contacts">
+        <div class="container">
+            <div class="footer-content">
+                <h3>Contatti</h3>
+                <div class="contact-info">
+                    <p>LinkedIn: <a href="https://it.linkedin.com/in/luigi-schillaci-192404201" target="_blank" rel="noopener noreferrer">Il Mio Profilo</a></p>
+                    <p>GitHub: <a href="https://github.com/LuigiSchillaci19" target="_blank" rel="noopener noreferrer">Il Mio Repository</a></p>
+                </div>
+                <p class="footer-note">© 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
