@@ -1156,7 +1156,7 @@ footer::before {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .nav-menu {
         position: fixed;
         left: -100%;
@@ -1171,29 +1171,31 @@ footer::before {
         padding: 20px 0;
         border: 1px solid #00ff41;
     }
-
-    .nav-menu.active {
-        left: 0;
+    .hero {
+        padding: 60px 0;
     }
+        .nav-menu.active {
+            left: 0;
+        }
 
     .nav-toggle {
         display: flex;
     }
 
-    .nav-toggle.active .bar:nth-child(2) {
-        opacity: 0;
-    }
+        .nav-toggle.active .bar:nth-child(2) {
+            opacity: 0;
+        }
 
-    .nav-toggle.active .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-    }
+        .nav-toggle.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
 
-    .nav-toggle.active .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-    }
+        .nav-toggle.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
 
     .hero-content h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     .profile-info h1 {
@@ -1214,9 +1216,9 @@ footer::before {
         padding-left: 40px;
     }
 
-    .timeline-item::before {
-        left: 9px;
-    }
+        .timeline-item::before {
+            left: 9px;
+        }
 
     .timeline-date {
         text-align: left;
@@ -1237,7 +1239,7 @@ footer::before {
     }
 
     .article-header h1 {
-        font-size: 2rem;
+        font-size: 1rem;
     }
 
     .highlights-grid {
@@ -1255,7 +1257,7 @@ footer::before {
     }
 
     .hero-content h1 {
-        font-size: 2rem;
+        font-size: 1rem;
     }
 
     .cv-section {
@@ -1294,9 +1296,9 @@ code {
 
 pre {
     background: rgba(0, 0, 0, 0.8);
-    padding: 20px;
+    padding: 15px;
     border: 1px solid #333;
-    border-left: 4px solid #00ff41;
+    border-left: 2px solid #00ff41;
     overflow-x: auto;
     color: #00ff41;
     font-family: 'Courier New', monospace;
