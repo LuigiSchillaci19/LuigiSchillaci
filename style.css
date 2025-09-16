@@ -1172,8 +1172,23 @@ footer::before {
         border: 1px solid #00ff41;
     }
     .hero {
-        padding: 60px 0;
+        padding: 40px 20px; /* meno spazio per evitare tagli */
+        text-align: center;
     }
+
+        .hero::before {
+            left: -25%; /* riduco oversize */
+            width: 150%;
+        }
+
+        .hero h1 {
+            font-size: 1.6rem;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+        }
+
         .nav-menu.active {
             left: 0;
         }
@@ -1194,9 +1209,7 @@ footer::before {
             transform: translateY(-8px) rotate(-45deg);
         }
 
-    .hero-content h1 {
-        font-size: 2rem;
-    }
+
 
     .profile-info h1 {
         font-size: 2rem;
@@ -1255,10 +1268,23 @@ footer::before {
     .container {
         padding: 0 15px;
     }
-
-    .hero-content h1 {
-        font-size: 1rem;
+    .hero {
+        padding: 40px 20px; /* meno spazio per evitare tagli */
+        text-align: center;
     }
+
+        .hero::before {
+            left: -25%; /* riduco oversize */
+            width: 150%;
+        }
+
+        .hero h1 {
+            font-size: 1.6rem;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+        }
 
     .cv-section {
         padding: 20px;
