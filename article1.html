@@ -143,9 +143,6 @@
                             <li><code>Source</code> → puntatore ai byte sorgente (lo shellcode);</li>
                             <li><code>Length</code> → numero di byte da copiare (usa <code>shellcodeLen</code>).</li>
                         </ul>
-                        <p>
-                            Attenzione pratica: <code>RtlCopyMemory</code> non effettua controlli di bound. Verifica sempre che <code>allocated_mem != NULL</code> e che <code>shellcodeLen &gt; 0</code> prima della copia.
-                        </p>
                     </section>
 
                     <section>
