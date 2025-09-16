@@ -250,7 +250,7 @@ img {
 /* Buttons */
 .btn {
     display: inline-block;
-    padding: 12px 30px;
+    padding: 10px 20px;
     border-radius: 0;
     font-weight: 600;
     text-align: center;
@@ -1185,9 +1185,13 @@ footer::before {
         .hero h1 {
             font-size: 1.8rem;
         }
-
+        .hero pre {
+            font-size: 0.5rem; /* testo più compatto */
+            padding: 0.5em; /* meno spazio interno */
+        }
     .hero-description {
-        font-size: 0.8rem;
+        max-width: 420px;
+        font-size: 0.6rem;
     }
 
 
@@ -1275,6 +1279,10 @@ footer::before {
         padding: 40px 20px; /* meno spazio per evitare tagli */
         text-align: center;
     }
+        .hero pre {
+            font-size: 0.5rem; /* testo più compatto */
+            padding: 0.7em; /* meno spazio interno */
+        }
 
         .hero::before {
             left: -25%; /* riduco oversize */
@@ -1286,7 +1294,8 @@ footer::before {
         }
 
     .hero-description {
-        font-size: 0.8rem;
+        max-width: 420px;
+        font-size: 0.6rem;
     }
 
 
