@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unpacking Malware</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h2>Self-Injection</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="cv.html" class="nav-link">CV</a></li>
+                    <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+                    <li class="nav-item"><a href="index.html#contacts" class="nav-link">Contatti</a></li>
+                </ul>
+                <div class="nav-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="article-main">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li>Unpacking Malware</li>
+                </ol>
+            </nav>
+
+            <article class="article-content">
+                <header class="article-header">
+                    <div class="article-meta">
+                        <span class="article-date">17 Ottobre 2025</span>
+                        <span class="article-category">Malware Analysis</span>
+                    </div>
+                    <h1>Unpacking Malware — Rilevazione e tipologie di packer</h1>
+                    <p class="article-subtitle">
+                        Packer è un software che protegge altri programmi applicando tecniche come offuscamento, compressione, virtualizzazione e altre trasformazioni. Viene impiegato sia per proteggere software legittimi sia, purtroppo, per nascondere malware.
+                    </p>
+                </header>
+
+                <div class="article-body">
+                    <section>
+                        <h2>Tipologie di packer e crypter</h2>
+                        <p>
+                            <strong>Packer gratuiti / open source</strong> — frequentemente usati per «packare» malware meno sofisticati.<br>
+                            Esempio: UPX, nPack, MEW, PolyCriptor, MPRESS, PE-PROTECTOR.
+                        </p>
+                        <p>
+                            <strong>Crypter / packer custom per malware</strong> — strumenti sviluppati ad hoc da gruppi di criminali o venduti nel dark web per offuscare il payload ed evadere le soluzioni antivirus. Esempi di nomi circolanti: Warzone Crypter, Yakuza Killer, Attila Crypter, AspireCrypt, Spartan Crypter.<br>
+                                                    </p>
+                        <p>
+                            <strong>Packer commerciali</strong> — soluzioni professionali create per proteggere software legittimi; sono generalmente i più difficili da analizzare e, occasionalmente, vengono usati anche dai creatori di malware.<br> Esempi: VMProtect, Themida, Obsidium, Armadillo, ASPack, PELock.
+                        </p>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>Come rilevare se un file è packed</h2>
+                        <p>
+                            Esistono diversi approcci e indicatori che suggeriscono che un binario è stato «packato». Alcuni strumenti utili: <strong>PEiD</strong> (per rilevamento di firme) e <strong>PE-bear</strong> (analisi manuale dei campi PE). I principali segnali sono:
+                        </p>
+                        <ul>
+                            <li><strong>Signatures</strong> — strumenti come PEiD cercano firme note di packer/crypter e possono indicare la presenza di packing.</li>
+                            <li><strong>Strings</strong> — un’assenza di stringhe leggibili o la presenza di molte stringhe «inutili» o senza senso può indicare compressione o cifratura.</li>
+                            <li><strong>Imports</strong> — l’assenza di tabelle di importazione coerenti o la presenza di importazioni ambigue è spesso un indizio di packing.</li>
+                            <li><strong>Section name</strong> — molti packer aggiungono sezioni extra al PE (ad es. sezioni con nome riconoscibile come <code>.UPX</code>), che possono rivelare il packer usato.</li>
+                            <li><strong>Entropy</strong> — l’entropia misura la casualità del contenuto di una sezione o del file: valori elevati sono tipici di dati compressi o cifrati e rappresentano un forte indicatore di packing.</li>
+                            <li><strong>Raw / Virtual sizes</strong> — differenze marcate tra la dimensione raw (numero di byte effettivi della sezione nel file su disco) e la virtual size (spazio che la sezione occupa in memoria una volta caricata) possono indicare che la sezione contiene codice compresso o cifrato che viene decompresso o ricostruito in memoria.</li>
+                        </ul>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>Breve panoramica: come avviene il processo di packing di un malware</h2>
+                        <p>Il processo tipico (semplificato) è il seguente:</p>
+                        <ol>
+                            <li><strong>Pre-elaborazione del payload</strong> — il codice originale viene compresso, cifrato e/o offuscato; possono essere applicate tecniche di trasformazione del codice (virtualizzazione, metamorfismo, ecc.).</li>
+                            <li><strong>Creazione del wrapper/loader</strong> — si genera un eseguibile contenente un loader: un piccolo stub che contiene il payload compresso/cifrato e la logica per decomprimerlo o decifrarlo.</li>
+                            <li><strong>Caricamento ed esecuzione</strong> — alla esecuzione, il loader alloca memoria, decodifica o decompresse il payload e risolve le importazioni mancanti (IAT), riparando eventuali riferimenti necessari.</li>
+                            <li><strong>Trasferimento del controllo</strong> — una volta ricostruito il codice eseguibile in memoria, il loader trasferisce il controllo al payload decriptato/decodificato, che prosegue l’esecuzione come se non fosse stato trasformato.</li>
+                            <li><strong>Tecniche anti-analisi</strong> — molti packer integrano contromisure (anti-debug, anti-emulatori, anti-VM, checksum, anti-dumping) per ostacolare l’analisi statica e dinamica.</li>
+                        </ol>
+                        <figure style="max-width:800px; margin:20px auto; text-align:center;">
+                            <img src="pack.png" alt="Diagramma del processo di packing e unpacking di un eseguibile PE" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">La figura mostra come il file originale venga offuscato e incapsulato in un loader (packing) e cosa avviene al momento dell’esecuzione quando lo stub di unpacking ricostruisce il PE originale in memoria.</figcaption>
+                        </figure>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>Metodi per unpackare un packed</h2>
+
+                        <h3>1. Staticamente — reverse engineering del processo di packing</h3>
+                        <p>Analisi statica significa studiare il binario senza eseguirlo, ricostruendone la logica di packing tramite reverse engineering.</p>
+
+                        <h3>2. Dinamicamente — debugging ed estrazione a runtime</h3>
+                        <p>Analisi dinamica significa eseguire il binario in un ambiente di debug controllato e osservare lo stub mentre decripta/decomprime il payload.</p>
+                        <p>Tecnica comune: impostare breakpoint su API di memoria e protezione (es. <code>VirtualAlloc</code>, <code>VirtualProtect</code>, <code>WriteProcessMemory</code>, <code>MapViewOfFile</code>, <code>CreateRemoteThread</code>, <code>LoadLibrary</code>, <code>GetProcAddress</code>) e catturare il codice ricostruito in memoria.</p>
+
+                        <h3>3. Automaticamente — strumenti e sandbox automatizzate</h3>
+                        <p>Esistono tool e servizi che automatizzano parte dell’unpacking o rilevano i cambiamenti a runtime.</p>
+                        <p>Strumenti utili: sandbox di analisi dinamica, <strong>PE-sieve</strong> / <strong>HookFinder</strong> / generic process dumper, servizi online di unpacking (quando consentito).</p>
+                    </section>
+
+                </div>
+
+                        <footer id="contacts">
+        <div class="container">
+           <div class="article-footer">
+                        <a href="blog.html" class="btn btn-secondary">← Torna al Blog</a>
+                        <a href="article2.html" class="btn btn-primary">Prossimo Articolo →</a>
+                    </div>
+
+            <div class="footer-content">
+                <h3>Contatti</h3>
+                <div class="contact-info">
+                    <p>LinkedIn: <a href="https://it.linkedin.com/in/luigi-schillaci-192404201" target="_blank" rel="noopener noreferrer">Il Mio Profilo</a></p>
+                    <p>GitHub: <a href="https://github.com/LuigiSchillaci19" target="_blank" rel="noopener noreferrer">Il Mio Repository</a></p>
+                </div>
+                <p class="footer-note">© 2025</p>
+            </div>
+        </div>
+    </footer>
+            </article>
+        </div>
+    </main>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
