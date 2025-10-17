@@ -285,7 +285,6 @@ img {
     color: #00ff41;
     border-color: #00ff41;
     box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
-    width: fit-content;
 }
 
 .btn-primary:hover {
@@ -299,7 +298,6 @@ img {
     color: #00ffff;
     border-color: #00ffff;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-   	 width: fit-content;
 }
 
 .btn-secondary:hover {
@@ -1060,8 +1058,8 @@ img {
 }
 
 .article-footer {
-    margin-top: 0px;
-    padding-top: 0px;
+    margin-top: 50px;
+    padding-top: 30px;
     border-top: 1px solid #333;
 }
 
@@ -1075,7 +1073,7 @@ img {
 footer {
     background: rgba(10, 10, 10, 0.95);
     color: #ffffff;
-    padding: 3px 0 30px;
+    padding: 50px 0 30px;
     border-top: 2px solid #00ff41;
     position: relative;
 }
@@ -1118,11 +1116,11 @@ footer::before {
 }
 
 .contact-info {
-    margin-bottom: 0px;
+    margin-bottom: 30px;
 }
 
 .contact-info p {
-    margin-bottom: 0px;
+    margin-bottom: 10px;
     font-family: 'Courier New', monospace;
 }
 
