@@ -38,9 +38,33 @@
 
     <main class="blog-main">
         <div class="container">
+        
             <section class="blog-header">
                 <h1>Il Mio Blog</h1>
             </section>
+                <article class="article-card" data-article="2">
+            <div class="article-header">
+                <span class="article-date">17 Ottobre 2025</span>
+                <span class="article-category">Malware Analysis</span>
+            </div>
+            <h2>Unpacking Malware — Rilevazione e tipologie di packer</h2>
+            <div class="article-preview">
+                <p>
+                    Analizziamo come identificare i file eseguibili packati, le principali famiglie di packer e le tecniche utilizzate per rilevarli o rimuoverli.
+                </p>
+            </div>
+            <div class="article-actions">
+                <button class="btn-expand" onclick="toggleArticlePreview(2)">
+                    Espandi anteprima
+                </button>
+                <a href="article2.html" class="btn btn-primary">Leggi tutto</a>
+            </div>
+            <div class="article-full-preview" id="preview-2" style="display: none;">
+                <p>
+                    I packer sono software usati per comprimere o offuscare altri programmi, spesso con l’obiettivo di proteggere il codice o nascondere attività malevole.
+                </p>
+            </div>
+        </article>
 
             <section class="blog-content">
                 <div class="articles-grid">
@@ -67,9 +91,7 @@
                             </p>
                         </div>
                     </article>
-
-                   
-                </div>
+                                 </div>
             </section>
         </div>
     </main>
