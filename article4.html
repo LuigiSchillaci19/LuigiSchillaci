@@ -113,7 +113,7 @@
                     <hr>
 
                     <section>
-                        <h2>4) Verifica dinamica — cosa ritorna il documento</h2>
+                        <h2>4) Verifica dinamica</h2>
                         <p>
                             Nel main della macro vengono usate proprietà come <code>InlineShapes(1).AlternativeText</code> e <code>InlineShapes(2).AlternativeText</code>. Per capire cosa contengono abbiamo eseguito la macro in ambiente controllato e aggiunto delle stampe di debug.
                         </p>
@@ -154,12 +154,12 @@
                     <hr>
 
                     <section>
-                        <h2>6) Cosa faceva il payload (overview)</h2>
+                        <h2>6) Cosa fa il payload (overview)</h2>
                         <p>
                             Ricostruendo il flusso, il documento:
                         </p>
                         <ol>
-                            <li>Riassembla stringhe nascoste tramite <code>change</code> (comandi);</li>
+                            <li>Riassembla stringhe nascoste tramite <code>change</code> (comandi powershell);</li>
                             <li>Decodifica blocchi base64 trovati in <code>InlineShapes(...).AlternativeText</code>;</li>
                             <li>Utilizza il codice risultante per scaricare un file <code>.bin</code> da un dominio malevolo e avviare l’esecuzione (dropper/loader).</li>
                         </ol>
@@ -170,12 +170,12 @@
 
                         <figure style="max-width:760px; margin:18px auto; text-align:center;">
                             <img src="immagini/macro8.png" alt="IOC iniziali estratti (URL, domini, potenziali hash)" style="max-width:100%; height:auto;">
-                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 7 — Alcuni IOC estratti: dominio, path e pattern utili per la detection.</figcaption>
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 7 — Codice powershell finale dove (srnwrufymp) è il codice in base64.</figcaption>
                         </figure>
 
                         <figure style="max-width:760px; margin:18px auto; text-align:center;">
                             <img src="immagini/macro10.png" alt="Codice finale ricostruito dopo deobfuscation" style="max-width:100%; height:auto;">
-                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 8 — Codice finale ricostruito dopo applicazione della funzione <code>change</code> e decodifica base64.</figcaption>
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 8 — Codice finale completo.</figcaption>
                         </figure>
                     </section>
 
@@ -205,4 +205,5 @@
     <script src="script.js" defer></script>
 </body>
 </html>
+
 
