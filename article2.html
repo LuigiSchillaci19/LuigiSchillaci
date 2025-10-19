@@ -68,10 +68,10 @@
                     <section>
                         <h2>Come rilevare se un file è packed</h2>
                         <p>
-                            Esistono diversi approcci e indicatori che suggeriscono che un binario è stato «packato». Alcuni strumenti utili: <strong>PEiD</strong> (per rilevamento di firme) e <strong>PE-bear</strong> (analisi manuale dei campi PE). I principali segnali sono:
+                            Esistono diversi approcci e indicatori che suggeriscono che un binario è stato «packato». Alcuni strumenti utili: <strong>Detect-It-Easy</strong> (per rilevamento di firme) e <strong>PEstudio</strong> (analisi manuale dei campi PE). I principali segnali sono:
                         </p>
                         <ul>
-                            <li><strong>Signatures</strong> — strumenti come PEiD cercano firme note di packer/crypter e possono indicare la presenza di packing.</li>
+                            <li><strong>Signatures</strong> — strumenti come Detect-It-Easy cercano firme note di packer/crypter e possono indicare la presenza di packing.</li>
                             <li><strong>Strings</strong> — un’assenza di stringhe leggibili o la presenza di molte stringhe «inutili» o senza senso può indicare compressione o cifratura.</li>
                             <li><strong>Imports</strong> — l’assenza di tabelle di importazione coerenti o la presenza di importazioni ambigue è spesso un indizio di packing.</li>
                             <li><strong>Section name</strong> — molti packer aggiungono sezioni extra al PE (ad es. sezioni con nome riconoscibile come <code>.UPX</code>), che possono rivelare il packer usato.</li>
@@ -143,5 +143,6 @@
 
     <script src="script.js" defer></script></body>
 </html>
+
 
 
