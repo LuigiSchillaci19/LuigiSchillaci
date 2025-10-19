@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Obfuscamento macro Word malevole — Analisi</title>
+    <meta name="description" content="Analisi passo-passo di un documento Word con macro offuscate: deobfuscation, funzione change, replica in Python e IOC estratti.">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h2>Obfuscamento di macro in un documento Word malevolo</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="cv.html" class="nav-link">CV</a></li>
+                    <li class="nav-item"><a href="blog.html" class="nav-link active">Blog</a></li>
+                    <li class="nav-item"><a href="index.html#contacts" class="nav-link">Contatti</a></li>
+                </ul>
+                <div class="nav-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="article-main">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="index.html">Home</a> → 
+                <a href="blog.html">Blog</a> → 
+                <span>Obfuscamento macro Word malevole</span>
+            </nav>
+
+            <article class="article-content">
+                <header class="article-header">
+                    <div class="article-meta">
+                        <span class="article-date">18 Ottobre 2025</span>
+                        <span class="article-category">Malware Analysis</span>
+                    </div>
+                    <h1>Obfuscamento di macro in un documento Word malevolo</h1>
+                    <p class="article-subtitle">
+                        Analisi e deobfuscation di un documento Office che usa macro offuscate per scaricare un payload remoto: identificazione della funzione chiave, replica in Python e raccolta di IOC.
+                    </p>
+                </header>
+
+                <div class="article-body">
+                    <section>
+                        <h2>Introduzione</h2>
+                        <p>
+                            Gli attacchi veicolati tramite documenti Office con macro malevole rimangono una delle tecniche preferite dagli operatori di malware per ottenere un punto d'appoggio iniziale in una rete. In questo articolo mostriamo il workflow che ho seguito per deobfuscare un documento Word contenente macro offuscate: estrazione del codice, identificazione dei pattern, ricostruzione della funzione chiave e replica del comportamento in Python per ottenere indicatori utili (IOC).
+                        </p>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>1) Panoramica del documento</h2>
+                        <p>
+                            Il documento analizzato presenta testo in cirillico contenente delle macro. Dopo l'abilitazione, viene eseguito codice VBA fortemente offuscato.
+                        </p>
+
+                        <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro1.png" alt="Documento Word malevolo - testo in russo" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 1 — Documento Word con testo in cirillico che invita ad abilitare le macro.</figcaption>
+                        </figure>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>2) Estrazione e pulizia del codice</h2>
+                        <p>
+                            Per un’analisi efficace abbiamo copiato tutte le macro in un editor testuale (Visual Studio) per evidenziare pattern ripetuti e rimuovere codice "rumoroso" (array e funzioni non inutilizzati).
+                        </p>
+
+                        <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro3.png" alt="Codice macro obfuscato incollato in editor" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 2 — Codice delle macro incollato in editor: si notano array numerici ripetuti e blocchi vuoti.</figcaption>
+                        </figure>
+
+                        <p>
+                            Rimuovendo i pezzi ripetuti e funzioni inutilizzate è emersa una versione ridotta del codice, con le funzioni realmente utilizzate dal codice malevolo.
+                        </p>
+
+                        <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro4.png" alt="Codice ridotto dopo rimozione di stub e rumore" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 3 — Codice intermedio dopo la rimozione del rumore: le funzioni chiave sono più leggibili.</figcaption>
+                        </figure>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>3) La funzione chiave (riassunto)</h2>
+                        <p>
+                            Analizzando il codice è stata identificata una funzione ripetuta (qui chiamata <code>change</code>) che ha il seguente comportamento in parole semplici:
+                        </p>
+                        <ol>
+                            <li>Decodifica il parametro <code>testo_alternativo</code> tramite <code>StrConv(..., 64)</code>, ottenendo <code>stringa_decodificata</code>.</li>
+                            <li>Divide (<code>Split</code>) <code>stringa_decodificata</code> usando <code>Chr(0)</code> (carattere NUL) come separatore, ottenendo un array di frammenti.</li>
+                            <li>Per ogni indice presente in una lista (<code>Array</code>), preleva l'elemento corrispondente (con conversione da indice 1-based a 0-based) e concatena i frammenti nell'ordine specificato.</li>
+                        </ol>
+
+                        <p><strong>In sintesi:</strong> la funzione estrae e concatena pezzi di una grande stringa decodificata, riassemblando stringhe utili (es. URL, comandi, base64).</p>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>4) Verifica dinamica — cosa ritorna il documento</h2>
+                        <p>
+                            Nel main della macro vengono usate proprietà come <code>InlineShapes(1).AlternativeText</code> e <code>InlineShapes(2).AlternativeText</code>. Per capire cosa contengono abbiamo eseguito la macro in ambiente controllato e aggiunto delle stampe di debug.
+                        </p>
+
+                        <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro6.png" alt="Output debug - AlternativeText mostrati durante l'esecuzione della macro" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 4 — Output della macro durante l'esecuzione: AlternativeText estratti.</figcaption>
+                        </figure>
+
+                        <p>
+                            Risultato tipico osservato:
+                        </p>
+                        <ul>
+                            <li><code>InlineShapes(1).AlternativeText</code> → frammento testuale (stringa semplice);</li>
+                            <li><code>InlineShapes(2).AlternativeText</code> → base64 che, una volta decodificato, contiene ulteriore codice o payload parziali.</li>
+                        </ul>
+
+                        <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro9.png" alt="Base64 decodificato presente in AlternativeText" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 5 — Contenuto base64 decodificato: possibili script o URL ulteriori.</figcaption>
+                        </figure>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>5) Replica della funzione <code>change</code> in Python</h2>
+                        <p>
+                            Per automatizzare l'estrazione abbiamo replicato il comportamento della funzione in Python: il codice prende una lista di indici 1-based e una stringa già decodificata (frammenti separati dal NUL), e restituisce la ricostruzione.
+                        </p>
+
+                     <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro7.png" alt="Base64 decodificato presente in AlternativeText" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 5 — Contenuto base64 decodificato: possibili script o URL ulteriori.</figcaption>
+                        </figure>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>6) Cosa faceva il payload (overview)</h2>
+                        <p>
+                            Ricostruendo il flusso, il documento:
+                        </p>
+                        <ol>
+                            <li>Riassembla stringhe nascoste tramite <code>change</code> (comandi);</li>
+                            <li>Decodifica blocchi base64 trovati in <code>InlineShapes(...).AlternativeText</code>;</li>
+                            <li>Utilizza il codice risultante per scaricare un file <code>.bin</code> da un dominio malevolo e avviare l’esecuzione (dropper/loader).</li>
+                        </ol>
+
+                        <p>
+                            Il dominio usato per il download non è più raggiungibile alla data dell’analisi, ma dai frammenti abbiamo ricavato IOC utili.
+                        </p>
+
+                        <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro8.png" alt="IOC iniziali estratti (URL, domini, potenziali hash)" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 7 — Alcuni IOC estratti: dominio, path e pattern utili per la detection.</figcaption>
+                        </figure>
+
+                        <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro10.png" alt="Codice finale ricostruito dopo deobfuscation" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 8 — Codice finale ricostruito dopo applicazione della funzione <code>change</code> e decodifica base64.</figcaption>
+                        </figure>
+                    </section>
+
+                <footer class="article-footer">
+                    <div class="article-nav">
+                        <a href="blog.html" class="btn btn-secondary">← Torna al Blog</a>
+                        <a href="index.html" class="btn btn-primary">Home</a>
+                    </div>
+                </footer>
+            </article>
+        </div>
+    </main>
+
+    <footer id="contacts" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <h3>Contatti</h3>
+                <div class="contact-info">
+                    <p>LinkedIn: <a href="https://it.linkedin.com/in/luigi-schillaci-192404201" target="_blank" rel="noopener noreferrer">Il Mio Profilo</a></p>
+                    <p>GitHub: <a href="https://github.com/LuigiSchillaci19" target="_blank" rel="noopener noreferrer">Il Mio Repository</a></p>
+                </div>
+                <p class="footer-note">© 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
