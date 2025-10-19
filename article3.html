@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unpacking Malware — Analisi Dridex</title>
+    <meta name="description" content="Analisi e procedimento pratico per l'unpacking di una sample di Dridex: identificazione del packing, breakpoint utili, dump della memoria e ricostruzione del PE unpacked.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h2>Unpacking Malware</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="cv.html" class="nav-link">CV</a></li>
+                    <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+                    <li class="nav-item"><a href="index.html#contacts" class="nav-link">Contatti</a></li>
+                </ul>
+                <div class="nav-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+   <main class="article-main">
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="index.html">Home</a> → 
+                <a href="blog.html">Blog</a> → 
+                <span>Unpacking Malware</span>
+            </nav>
+            
+            <article class="article-content">
+                <header class="article-header">
+                    <div class="article-meta">
+                        <span class="article-date">18 Ottobre 2025</span>
+                        <span class="article-category">Malware Analysis</span>
+                    </div>
+                    <h1>Analisi Malware Dridex — Unpacking pratico</h1>
+                    <p class="article-subtitle">
+                        Procedura per identificare un sample packed, intercettare la fase di decrittazione a runtime e ricostruire il PE unpacked per analisi successive.
+                    </p>
+                </header>
+
+                <div class="article-body">
+                    <section>
+                        <h2>Introduzione</h2>
+                        <p>
+                            Dridex è una famiglia di trojan nata per il furto di credenziali bancarie online. Nel tempo ha esteso le proprie capacità includendo componenti di <em>infostealer</em> e meccanismi da botnet, avvicinandosi a famiglie come TrickBot e QakBot. Varianti recenti sono state veicolate tramite documenti Office malevoli e alcune campagne hanno sfruttato vulnerabilità note come Log4Shell.  
+                            (Fonte: Check Point — <a href="https://www.checkpoint.com/it/cyber-hub/threat-prevention/what-is-malware/what-is-dridex-malware/" target="_blank" rel="noopener noreferrer">report</a>)
+                        </p>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>Strumenti e prima analisi</h2>
+                        <p>Per valutare se il sample è packed ho impiegato i seguenti strumenti:</p>
+                        <ul>
+                            <li><strong>Detect It Easy (DIE)</strong> — identificazione del packer/signature;</li>
+                            <li><strong>PE-Studio</strong> — ispezione degli import, delle sezioni e delle anomalie;</li>
+                            <li><strong>Analisi dell’entropia</strong> — per identificare sezioni con dati compressi o cifrati.</li>
+                        </ul>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="DIE.jpeg" alt="Detect It Easy - rilevamento packer" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 1 — Detect It Easy: risultato di rilevamento packer/signature.</figcaption>
+                        </figure>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="pestudio1.jpeg" alt="PE-Studio - imports" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 2 — PE-Studio: vista degli import (presenza della sezione .text1 non standard).</figcaption>
+                        </figure>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="pestudio2.jpeg" alt="PE-Studio - sezione .text1" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 3 — PE-Studio: vista degli import.</figcaption>
+                        </figure>
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>Debug dinamico — breakpoints e osservazione del comportamento</h2>
+                        <p>
+                            Obiettivo: intercettare il punto in cui lo stub di unpacking alloca memoria, scrive il payload decrittato e rende le pagine eseguibili, quindi trasferisce l’esecuzione al payload.
+                        </p>
+
+                        <h3>Breakpoints principali impostati</h3>
+                        <ul>
+                            <li><code>VirtualAlloc</code> — viene chiamata quando un programma richiede nuova memoria nello spazio utente — tipicamente usato dal packer per creare l’area in cui “ricostruire” il codice decriptato.
+Quindi ogni chiamata a VirtualAlloc può essere il segnale che il packer sta preparando la zona dove metterà il payload.</li>
+                            <li><code>VirtualProtect</code> — viene usata per modificare i permessi di memoria (es. da RW → RX). Quando il packer ha finito di scrivere il codice decriptato, cambia i permessi per poterlo eseguire.</li>
+                            <li>Breakpoint su salti indiretti tipici (<code>jmp eax</code>, <code>call eax</code>, ecc.) e su <code>ret</code> rilevanti.</li>
+                        </ul>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="breakpoint.jpeg" alt="Breakpoint su VirtualAlloc e VirtualProtect" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 4 — Breakpoint impostati su <code>VirtualAlloc</code> e <code>VirtualProtect</code> in x32dbg.</figcaption>
+                        </figure>
+
+                             <ol>
+                            <li>Per ogni ritorno da <code>VirtualAlloc</code> ho annotato l’indirizzo restituito (registro <code>EAX</code>).</li>
+                            <li>Ho effettuato dump della memoria all’indirizzo restituito dopo la chiamata: spesso il packer esegue più allocazioni/writes; nel caso analizzato il codice utile è emerso alla terza chiamata a <code>VirtualAlloc</code>.</li>
+                            <li>Ho cercato un salto/call che puntasse all’indirizzo allocato e ho impostato breakpoint su quel salto: in questo modo si entra direttamente nel codice decrittato.</li>
+                        </ol>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="dump-corretto.jpeg" alt="Dump memoria con codice decrittato" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 5 — Dump di memoria che mostra il codice decrittato: punto di interesse per l'estrazione.</figcaption>
+                        </figure>
+                         <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="jump.jpeg" alt="jmp eax" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 6 — Scorrendo il codice, trovo un jmp eax, su cui imposto un breakpoint.</figcaption>
+                        </figure>
+				 <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="main.jpeg" alt="main" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 7 — Codice trovato.</figcaption>
+                        </figure>
+
+                    </section>
+
+                    <hr>
+
+                    <section>
+                        <h2>Estrazione e ricostruzione del PE</h2>
+                        <p>
+                            Dopo aver localizzato l'eseguibile in memoria, i passaggi per ottenere un PE utilizzabile sono i seguenti:
+                        </p>
+                        <ol>
+                            <li>Annotare l’indirizzo virtuale di base.</li>
+                            <li>Salvare l’immagine di processo (memory dump) con <strong>Process Hacker</strong> per ottenere il contenuto completo della memoria del processo attivo.</li>
+                            <li>Aprire il dump con <strong>PE-Bear</strong> o un editor esadecimale e allineare gli indirizzi raw ai corrispondenti VirtualAddress osservati in memoria: calcolare le raw size come differenza tra gli offset raw come differenza dei successivi.</li>
+                            <li>Verificare e correggere, se necessario, campi critici del PE,come  <code>SizeOfImage</code>, per ottenere un PE coerente.</li>
+                        </ol>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="process-hacker.jpeg" alt="Process Hacker - salvataggio immagine processo" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 8 — Process Hacker: salvataggio dell'immagine di processo per ottenere il dump della memoria.</figcaption>
+                        </figure>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="pe-bear.jpeg" alt="PE-Bear - analisi e allineamento" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 9 — PE-Bear: analisi del dump e allineamento di RAW/Virt addresses.</figcaption>
+                        </figure>
+
+                        <figure style="max-width:720px; margin:18px auto; text-align:center;">
+                            <img src="pe-bear-finale.jpeg" alt="PE-Bear - tutto allineato" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 10 — Esempio finale: PE-Bear finale.</figcaption>
+                        </figure>
+                    </section>
+
+                    
+           
+                </div>
+
+                <footer class="article-footer">
+                    <div class="article-nav">
+                        <a href="blog.html" class="btn btn-secondary">← Torna al Blog</a>
+                        <a href="article3.html" class="btn btn-primary">Prossimo Articolo →</a>
+                    </div>
+                </footer>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer id="contacts" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <h3>Contatti</h3>
+                <div class="contact-info">
+                    <p>LinkedIn: <a href="https://it.linkedin.com/in/luigi-schillaci-192404201" target="_blank" rel="noopener noreferrer">Il Mio Profilo</a></p>
+                    <p>GitHub: <a href="https://github.com/LuigiSchillaci19" target="_blank" rel="noopener noreferrer">Il Mio Repository</a></p>
+                </div>
+                <p class="footer-note">© 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
