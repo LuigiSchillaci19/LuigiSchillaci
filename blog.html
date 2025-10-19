@@ -42,6 +42,34 @@
             <section class="blog-header">
                 <h1>Il Mio Blog</h1>
             </section>
+            
+            <article class="article-card" data-article="3">
+                        <div class="article-header">
+                            <span class="article-date">18 Ottobre 2025</span>
+                            <span class="article-category">Malware Analysis</span>
+                        </div>
+                        <h2>Analisi Malware Dridex — Unpacking pratico</h2>
+                        <div class="article-preview">
+                            <p>
+                                Procedura passo-passo per identificare un sample di Dridex packato, intercettare la decrittazione a runtime e ricostruire il PE unpacked.
+                            </p>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn-expand" onclick="toggleArticlePreview(3)">
+                                Espandi anteprima
+                            </button>
+                            <a href="article3.html" class="btn btn-primary">Leggi tutto</a>
+                        </div>
+                        <div class="article-full-preview" id="preview-3" style="display: none;">
+                            <p>
+                                In questo articolo ho mostrato come usare Detect It Easy e PE-Studio per identificare packing (sezione .text1, entropia elevata), impostare breakpoint su <code>VirtualAlloc</code>/<code>VirtualProtect</code> in x32dbg per intercettare il codice decrittato, dumpare la memoria, salvare l'immagine di processo (Process Hacker) e ricostruire il PE con PE-Bear.
+                            </p>
+                            <p>
+                                Il risultato è un PE unpacked idoneo ad analisi statiche approfondite e al recupero di IOC.
+                            </p>
+                        </div>
+                    </article>
+                    
                 <article class="article-card" data-article="2">
             <div class="article-header">
                 <span class="article-date">17 Ottobre 2025</span>
