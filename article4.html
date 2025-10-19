@@ -99,7 +99,7 @@
                     <section>
                         <h2>3) La funzione chiave (riassunto)</h2>
                         <p>
-                            Analizzando il codice è stata identificata una funzione ripetuta (qui chiamata <code>change</code>) che ha il seguente comportamento in parole semplici:
+                            Analizzando il codice è stata identificata una funzione (qui chiamata <code>change</code>) che ha il seguente comportamento in parole semplici:
                         </p>
                         <ol>
                             <li>Decodifica il parametro <code>testo_alternativo</code> tramite <code>StrConv(..., 64)</code>, ottenendo <code>stringa_decodificata</code>.</li>
@@ -108,6 +108,11 @@
                         </ol>
 
                         <p><strong>In sintesi:</strong> la funzione estrae e concatena pezzi di una grande stringa decodificata, riassemblando stringhe utili (es. URL, comandi, base64).</p>
+                     <figure style="max-width:760px; margin:18px auto; text-align:center;">
+                            <img src="immagini/macro5.png" alt="Codice macro obfuscato incollato in editor" style="max-width:100%; height:auto;">
+                            <figcaption style="font-size:13px; color:#555; margin-top:6px;">Fig. 2 — Codice delle macro incollato in editor: si notano array numerici ripetuti e blocchi vuoti.</figcaption>
+                        </figure>
+
                     </section>
 
                     <hr>
@@ -205,5 +210,6 @@
     <script src="script.js" defer></script>
 </body>
 </html>
+
 
 
